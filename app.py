@@ -1,8 +1,20 @@
-import numpy as np
 import streamlit as st
 import pandas as pd
-import joblib
+import numpy as np
 import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
+
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
@@ -13,11 +25,10 @@ from sklearn.metrics import (
     confusion_matrix
 )
 
-st.set_page_config(
-    page_title="Online Shopper Purchase Prediction", layout="wide")
+st.set_page_config(page_title="Online Shopper Purchase Prediction", layout="wide")
 
 st.title("🛒 Online Shopper Purchase Prediction")
-st.markdown("Upload test dataset and evaluate different ML models.")
+st.markdown("Upload dataset and evaluate different ML models.")
 
 # Model selection
 model_name = st.selectbox(
@@ -32,33 +43,76 @@ model_name = st.selectbox(
     ]
 )
 
-# Load model
-model_path = f"model/{model_name.replace(' ', '_')}.pkl"
-model = joblib.load(model_path)
-
-# Upload dataset
-uploaded_file = st.file_uploader("Upload Test CSV File", type=["csv"])
+uploaded_file = st.file_uploader("Upload CSV File", type=["csv"])
 
 if uploaded_file is not None:
+
     df = pd.read_csv(uploaded_file)
 
     if "Revenue" not in df.columns:
-        st.error("Uploaded file must contain 'Revenue' column.")
+        st.error("Dataset must contain 'Revenue' column.")
     else:
         df["Revenue"] = df["Revenue"].astype(int)
 
         X = df.drop("Revenue", axis=1)
         y = df["Revenue"]
 
-        y_pred = model.predict(X)
-        y_proba = model.predict_proba(X)[:, 1]
+        categorical_cols = X.select_dtypes(include=["object"]).columns
+        numerical_cols = X.select_dtypes(exclude=["object"]).columns
 
-        acc = accuracy_score(y, y_pred)
-        prec = precision_score(y, y_pred)
-        rec = recall_score(y, y_pred)
-        f1 = f1_score(y, y_pred)
-        auc = roc_auc_score(y, y_proba)
-        mcc = matthews_corrcoef(y, y_pred)
+        numeric_transformer = StandardScaler()
+        categorical_transformer = OneHotEncoder(handle_unknown="ignore")
+
+        preprocessor = ColumnTransformer(
+            transformers=[
+                ("num", numeric_transformer, numerical_cols),
+                ("cat", categorical_transformer, categorical_cols)
+            ]
+        )
+
+        # Select model
+        if model_name == "Logistic Regression":
+            model = LogisticRegression(max_iter=1000)
+        elif model_name == "Decision Tree":
+            model = DecisionTreeClassifier(random_state=42)
+        elif model_name == "KNN":
+            model = KNeighborsClassifier(n_neighbors=5)
+        elif model_name == "Naive Bayes":
+            model = GaussianNB()
+        elif model_name == "Random Forest":
+            model = RandomForestClassifier(n_estimators=150, max_depth=8, random_state=42)
+        else:
+            model = XGBClassifier(
+                n_estimators=150,
+                max_depth=6,
+                learning_rate=0.1,
+                eval_metric="logloss",
+                random_state=42
+            )
+
+        pipe = Pipeline(steps=[
+            ("preprocessor", preprocessor),
+            ("classifier", model)
+        ])
+
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y,
+            test_size=0.2,
+            random_state=42,
+            stratify=y
+        )
+
+        pipe.fit(X_train, y_train)
+
+        y_pred = pipe.predict(X_test)
+        y_proba = pipe.predict_proba(X_test)[:, 1]
+
+        acc = accuracy_score(y_test, y_pred)
+        prec = precision_score(y_test, y_pred)
+        rec = recall_score(y_test, y_pred)
+        f1 = f1_score(y_test, y_pred)
+        auc = roc_auc_score(y_test, y_proba)
+        mcc = matthews_corrcoef(y_test, y_pred)
 
         st.subheader("📊 Evaluation Metrics")
 
@@ -75,28 +129,23 @@ if uploaded_file is not None:
 
         st.subheader("📌 Confusion Matrix")
 
-        cm = confusion_matrix(y, y_pred)
+        cm = confusion_matrix(y_test, y_pred)
 
         fig, ax = plt.subplots(figsize=(3,3))
         ax.imshow(cm, cmap="Blues")
 
         ax.set_title("Confusion Matrix", fontsize=10)
-        ax.set_xlabel("Predicted Label", fontsize=9)
-        ax.set_ylabel("True Label", fontsize=9)
+        ax.set_xlabel("Predicted", fontsize=9)
+        ax.set_ylabel("Actual", fontsize=9)
 
-        ax.set_xticks([0, 1])
-        ax.set_yticks([0, 1])
+        ax.set_xticks([0,1])
+        ax.set_yticks([0,1])
         ax.set_xticklabels(["No Purchase", "Purchase"], fontsize=8)
         ax.set_yticklabels(["No Purchase", "Purchase"], fontsize=8)
 
-
         for i in range(2):
             for j in range(2):
-                ax.text(j, i, cm[i, j],
-                        ha="center", va="center",
-                        fontsize=9,
-                        color="black")
-        
+                ax.text(j, i, cm[i, j], ha="center", va="center", fontsize=9)
+
         plt.tight_layout()
         st.pyplot(fig, use_container_width=False)
-
