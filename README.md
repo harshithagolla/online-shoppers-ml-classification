@@ -106,6 +106,7 @@ The application demonstrates real-time model training and performance comparison
 
 ## 7. Project Structure
 
+```
 online-shoppers-ml/
 │
 ├── app.py
@@ -120,6 +121,8 @@ online-shoppers-ml/
     ├── Naive_Bayes.pkl
     ├── Random_Forest.pkl
     ├── XGBoost.pkl
+```
+
 
 ---
 
