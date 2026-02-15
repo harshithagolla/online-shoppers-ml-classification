@@ -5,6 +5,7 @@
 The objective of this project is to predict whether an online website visitor will complete a purchase (Revenue = 1) or not (Revenue = 0) based on their browsing behavior and session characteristics.
 
 This is a binary classification problem aimed at helping businesses improve marketing strategies, optimize customer targeting, and increase conversion rates by identifying high-intent users.
+
 ---
 
 ## 2. Dataset Description
@@ -35,6 +36,7 @@ Some key features include:
 - TrafficType
 
 The dataset is slightly imbalanced, with approximately 15% positive purchase cases, making evaluation metrics such as AUC, F1 Score, and MCC important for proper performance assessment.
+
 ---
 
 ## 3. Models Implemented
@@ -49,6 +51,7 @@ The following six classification models were implemented:
 6. XGBoost (Ensemble Model)
 
 All models were trained and evaluated using the same train-test split strategy to ensure fair comparison.
+
 ---
 
 ## 4. Model Evaluation Metrics Comparison
@@ -70,6 +73,7 @@ Matthews Correlation Coefficient (MCC)
 | Naive Bayes         | 0.6736   | 0.7939 | 0.2941    | 0.7906 | 0.4287   | 0.3249 |
 | Random Forest       | 0.9023   | 0.9198 | 0.7854    | 0.5079 | 0.6169   | 0.5814 |
 | XGBoost             | 0.8998   | 0.9275 | 0.7103    | 0.5969 | 0.6486   | 0.5938 |
+
 ---
 
 ## 5. Model Performance Observations
@@ -80,6 +84,7 @@ Matthews Correlation Coefficient (MCC)
 **Naive Bayes** - Achieved high recall but very low precision, resulting in many false positives. Overall weaker perfAormance compared to other models.
 **Random Forest** - Delivered strong performance with high accuracy and balanced precision-recall tradeoff. Significant improvement over a single Decision Tree.
 **XGBoost** - Achieved the highest AUC and best overall F1 and MCC scores. Effectively handled nonlinear relationships and class imbalance, making it the best-performing model.
+
 ---
 
 ## 6. Streamlit Application Features
@@ -93,6 +98,7 @@ The deployed Streamlit application includes:
 - Interactive and user-friendly interface
 
 The application demonstrates real-time model training and performance comparison in an interactive environment.
+
 ---
 
 ## 7. Project Structure
@@ -111,6 +117,7 @@ online-shoppers-ml/
     ├── Naive_Bayes.pkl
     ├── Random_Forest.pkl
     ├── XGBoost.pkl
+    
 ---
 
 ## 8. Conclusion
