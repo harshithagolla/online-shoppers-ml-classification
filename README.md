@@ -78,12 +78,15 @@ Matthews Correlation Coefficient (MCC)
 
 ## 5. Model Performance Observations
 
-**Logistic Regression** - Achieved strong accuracy and AUC, but recall was relatively low, indicating difficulty in identifying minority purchase cases.
-**Decision Tree** - Captured nonlinear relationships but showed lower AUC compared to ensemble methods. Moderate overall performance.
-**K-Nearest Neighbors** - Provided balanced performance but struggled with recall due to class imbalance.
-**Naive Bayes** - Achieved high recall but very low precision, resulting in many false positives. Overall weaker perfAormance compared to other models.
-**Random Forest** - Delivered strong performance with high accuracy and balanced precision-recall tradeoff. Significant improvement over a single Decision Tree.
-**XGBoost** - Achieved the highest AUC and best overall F1 and MCC scores. Effectively handled nonlinear relationships and class imbalance, making it the best-performing model.
+| ML Model                | Observation                                                                                                                                                        |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Logistic Regression** | Achieved strong accuracy and AUC, but recall was relatively low, indicating difficulty in identifying minority purchase cases.                                     |
+| **Decision Tree**       | Captured nonlinear relationships but showed lower AUC compared to ensemble methods. Moderate overall performance.                                                  |
+| **KNN**                 | Provided balanced performance but struggled with recall due to class imbalance.                                                                                    |
+| **Naive Bayes**         | Achieved high recall but very low precision, resulting in many false positives. Overall weaker performance compared to other models.                               |
+| **Random Forest**       | Delivered strong performance with high accuracy and balanced precision-recall tradeoff. Significant improvement over a single Decision Tree.                       |
+| **XGBoost**             | Achieved the highest AUC and best overall F1 and MCC scores. Effectively handled nonlinear relationships and class imbalance, making it the best-performing model. |
+
 
 ---
 
@@ -117,7 +120,7 @@ online-shoppers-ml/
     ├── Naive_Bayes.pkl
     ├── Random_Forest.pkl
     ├── XGBoost.pkl
-    
+
 ---
 
 ## 8. Conclusion
