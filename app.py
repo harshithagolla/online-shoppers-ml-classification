@@ -83,11 +83,14 @@ if uploaded_file is not None:
             model = RandomForestClassifier(n_estimators=150, max_depth=8, random_state=42)
         else:
             model = XGBClassifier(
-                n_estimators=150,
-                max_depth=6,
+                n_estimators=50,
+                max_depth=4,
                 learning_rate=0.1,
+                subsample=0.8,
+                colsample_bytree=0.8,
                 eval_metric="logloss",
-                random_state=42
+                random_state=42,
+                n_jobs=1
             )
 
         pipe = Pipeline(steps=[
@@ -102,7 +105,9 @@ if uploaded_file is not None:
             stratify=y
         )
 
-        pipe.fit(X_train, y_train)
+        with st.spinner("Training model... Please wait ⏳"):
+            pipe.fit(X_train, y_train)
+
 
         y_pred = pipe.predict(X_test)
         y_proba = pipe.predict_proba(X_test)[:, 1]
